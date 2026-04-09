@@ -55,12 +55,105 @@
   select.commitment-select.val-Targeted { background: #f39c12; color: #fff; border-color: #f39c12; }
   select.commitment-select.val-Cut { background: #e74c3c; color: #fff; border-color: #e74c3c; }
   select.commitment-select.val- { background: #f9f9f9; color: #999; }
+
+  /* Save status indicator */
+  .save-bar { max-width: 1300px; margin: 0 auto 10px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
+  .save-status { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 8px; }
+  .status-ok { color: #27ae60; }
+  .status-saving { color: #f39c12; }
+  .status-error { color: #e74c3c; cursor: pointer; }
+  .token-btn { font-size: 11px; padding: 4px 12px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; color: #555; }
+  .token-btn:hover { background: #f0f2f5; }
+  .refresh-btn { font-size: 11px; padding: 4px 12px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; color: #555; }
+  .refresh-btn:hover { background: #f0f2f5; }
 </style>
 <script>
-function updateDropdown(sel) {
-  sel.className = 'commitment-select val-' + sel.value;
+const REPO = 'rkundu-msft/ga-target-1e-report';
+const FILE_PATH = 'commitments.json';
+let commitments = {};
+let fileSha = null;
+let saveTimeout = null;
+
+function getToken() { return localStorage.getItem('gh_token_ga1e'); }
+function setToken(t) { localStorage.setItem('gh_token_ga1e', t); }
+function promptToken() {
+  var t = prompt('Enter a GitHub Personal Access Token (needs repo scope) to enable shared saving:');
+  if (t) { setToken(t); return true; }
+  return false;
+}
+
+async function loadCommitments() {
+  try {
+    showStatus('Loading...', 'saving');
+    var resp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH, {
+      headers: { 'Accept': 'application/vnd.github.v3+json', 'Cache-Control': 'no-cache' }
+    });
+    if (resp.ok) {
+      var data = await resp.json();
+      fileSha = data.sha;
+      commitments = JSON.parse(atob(data.content));
+      applyCommitments();
+      showStatus('Synced', 'ok');
+    }
+  } catch(e) { showStatus('Load failed', 'error'); }
+}
+
+function applyCommitments() {
+  document.querySelectorAll('select.commitment-select').forEach(function(sel) {
+    var id = sel.closest('tr').querySelector('a').textContent.trim();
+    if (commitments[id]) {
+      sel.value = commitments[id];
+      sel.className = 'commitment-select val-' + commitments[id];
+    }
+  });
   updateSummary();
 }
+
+async function saveCommitments() {
+  var token = getToken();
+  if (!token) { if (!promptToken()) return; token = getToken(); }
+  showStatus('Saving...', 'saving');
+  try {
+    var getResp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH, {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (getResp.ok) { fileSha = (await getResp.json()).sha; }
+    var content = btoa(unescape(encodeURIComponent(JSON.stringify(commitments, null, 2))));
+    var resp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH, {
+      method: 'PUT',
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'Update commitments', content: content, sha: fileSha })
+    });
+    if (resp.ok) {
+      fileSha = (await resp.json()).content.sha;
+      showStatus('Saved', 'ok');
+    } else if (resp.status === 401 || resp.status === 403) {
+      showStatus('Bad token - click Set Token', 'error');
+      localStorage.removeItem('gh_token_ga1e');
+    } else { showStatus('Save failed: ' + resp.status, 'error'); }
+  } catch(e) { showStatus('Save error', 'error'); }
+}
+
+function queueSave() {
+  if (saveTimeout) clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(saveCommitments, 1000);
+}
+
+function showStatus(msg, type) {
+  var el = document.getElementById('save-status');
+  el.textContent = msg;
+  el.className = 'save-status status-' + type;
+  if (type === 'ok') setTimeout(function() { el.textContent = ''; el.className = 'save-status'; }, 3000);
+}
+
+function updateDropdown(sel) {
+  sel.className = 'commitment-select val-' + sel.value;
+  var id = sel.closest('tr').querySelector('a').textContent.trim();
+  if (sel.value) { commitments[id] = sel.value; } else { delete commitments[id]; }
+  updateSummary();
+  queueSave();
+}
+
 function updateSummary() {
   var rows = document.querySelectorAll('tr[data-kr]');
   var counts = {};
@@ -106,12 +199,19 @@ function updateSummary() {
     }
   });
 }
+
+document.addEventListener('DOMContentLoaded', loadCommitments);
 </script>
 </head>
 <body>
 
 <div class="header">
   <h1>One Events GA (1E) - Commitment View</h1>
+</div>
+<div class="save-bar">
+  <span id="save-status" class="save-status"></span>
+  <button class="refresh-btn" onclick="loadCommitments()">Refresh</button>
+  <button class="token-btn" onclick="promptToken()">Set Token</button>
 </div>
 
 <div class="section-title">Commitment Summary by KR</div>
