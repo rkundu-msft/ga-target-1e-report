@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GA_Target_1E - LT Review</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; color: #1a1a1a; padding: 30px; }
+  .header { text-align: center; margin-bottom: 8px; }
+  .header h1 { font-size: 22px; margin-bottom: 4px; }
+  .header p { color: #666; font-size: 13px; margin-bottom: 20px; }
+  .section-title { font-size: 18px; font-weight: 700; margin: 30px auto 12px; max-width: 1300px; padding-bottom: 6px; border-bottom: 2px solid #ddd; }
+
+  .summary-table { max-width: 1300px; margin: 0 auto 36px; border-collapse: collapse; width: 100%; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+  .summary-table th { background: #1a1a1a; color: #fff; padding: 12px 16px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .summary-table td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table tr:hover td { background: #f9fbfd; }
+  .summary-table .kr-name { font-weight: 600; }
+  .summary-table .total-row td { background: #fafafa; font-weight: 700; border-top: 2px solid #ddd; }
+  .num { text-align: center; font-weight: 600; }
+
+  .badge { display: inline-block; padding: 3px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #fff; }
+  .badge-committed { background: #27ae60; }
+  .badge-targeted { background: #f39c12; }
+  .badge-cut { background: #e74c3c; }
+
+  .detail-section { max-width: 1300px; margin: 0 auto 24px; }
+  .kr-header { padding: 14px 20px; background: #fff; border-left: 5px solid; border-radius: 8px 8px 0 0; box-shadow: 0 1px 4px rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; }
+  .kr-header h3 { font-size: 15px; }
+  .kr-header .counts { font-size: 12px; color: #888; }
+  .detail-table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border-radius: 0 0 8px 8px; overflow: hidden; }
+  .detail-table th { background: #fafafa; text-align: left; padding: 8px 14px; font-size: 11px; color: #888; text-transform: uppercase; border-bottom: 1px solid #eee; }
+  .detail-table td { padding: 8px 14px; font-size: 12px; border-bottom: 1px solid #f5f5f5; }
+  .detail-table tr:last-child td { border-bottom: none; }
+  .detail-table tr:hover td { background: #f9fbfd; }
+  a { color: #4A90D9; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .state-tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; color: #fff; }
+  .type-tag { color: #888; font-size: 11px; }
+  .em-owner { font-size: 11px; color: #555; white-space: nowrap; }
+
+  /* Dropdown styling */
+  select.commitment-select {
+    padding: 3px 8px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #f9f9f9;
+    appearance: auto;
+  }
+  select.commitment-select.val-Committed { background: #27ae60; color: #fff; border-color: #27ae60; }
+  select.commitment-select.val-Targeted { background: #f39c12; color: #fff; border-color: #f39c12; }
+  select.commitment-select.val-Cut { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+  select.commitment-select.val- { background: #f9f9f9; color: #999; }
+</style>
+<script>
+function updateDropdown(sel) {
+  sel.className = 'commitment-select val-' + sel.value;
+  updateSummary();
+}
+function updateSummary() {
+  var rows = document.querySelectorAll('tr[data-kr]');
+  var counts = {};
+  rows.forEach(function(row) {
+    var kr = row.getAttribute('data-kr');
+    if (!counts[kr]) counts[kr] = {total:0, Committed:0, Targeted:0, Cut:0};
+    counts[kr].total++;
+    var badge = row.querySelector('.badge');
+    var sel = row.querySelector('select.commitment-select');
+    var val = '';
+    if (badge) val = badge.textContent.trim();
+    if (sel) val = sel.value;
+    if (val && counts[kr][val] !== undefined) counts[kr][val]++;
+  });
+  var allKRs = document.querySelectorAll('tr[data-summary-kr]');
+  var grandTotal=0, grandC=0, grandT=0, grandX=0;
+  allKRs.forEach(function(row) {
+    var kr = row.getAttribute('data-summary-kr');
+    if (counts[kr]) {
+      row.querySelector('.s-total').textContent = counts[kr].total;
+      row.querySelector('.s-committed').textContent = counts[kr].Committed;
+      row.querySelector('.s-targeted').textContent = counts[kr].Targeted;
+      row.querySelector('.s-cut').textContent = counts[kr].Cut;
+      grandTotal += counts[kr].total;
+      grandC += counts[kr].Committed;
+      grandT += counts[kr].Targeted;
+      grandX += counts[kr].Cut;
+    }
+  });
+  var totalRow = document.querySelector('tr.total-row');
+  if (totalRow) {
+    totalRow.querySelector('.s-total').textContent = grandTotal;
+    totalRow.querySelector('.s-committed').textContent = grandC;
+    totalRow.querySelector('.s-targeted').textContent = grandT;
+    totalRow.querySelector('.s-cut').textContent = grandX;
+  }
+  // Update KR section headers
+  document.querySelectorAll('.kr-header[data-kr]').forEach(function(hdr) {
+    var kr = hdr.getAttribute('data-kr');
+    if (counts[kr]) {
+      hdr.querySelector('.counts').textContent =
+        counts[kr].Committed + 'C / ' + counts[kr].Targeted + 'T / ' + counts[kr].Cut + 'X · ' + counts[kr].total + ' total';
+    }
+  });
+}
+</script>
+</head>
+<body>
+
+<div class="header">
+  <h1>One Events GA (1E) &mdash; LT Commitment Review</h1>
+  <p>Prepared by Rohit Kundu &middot; 2026-04-09 &middot; For LT review 2026-04-10</p>
+</div>
+
+<div class="section-title">Commitment Summary by KR</div>
+<table class="summary-table">
+  <thead>
+    <tr>
+      <th>KR</th>
+      <th style="text-align:center">Total</th>
+      <th style="text-align:center"><span class="badge badge-committed">Committed</span></th>
+      <th style="text-align:center"><span class="badge badge-targeted">Targeted</span></th>
+      <th style="text-align:center"><span class="badge badge-cut">Cut</span></th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr data-summary-kr="Fundamentals and Craft">
+      <td class="kr-name" style="color:#4A90D9">Fundamentals and Craft</td>
+      <td class="num s-total">33</td>
+      <td class="num s-committed" style="color:#27ae60">12</td>
+      <td class="num s-targeted" style="color:#f39c12">0</td>
+      <td class="num s-cut" style="color:#e74c3c">0</td>
+    </tr>
+    <tr data-summary-kr="Zoom compete/sales blockers">
+      <td class="kr-name" style="color:#E74C3C">Zoom compete/sales blockers</td>
+      <td class="num s-total">5</td>
+      <td class="num s-committed" style="color:#27ae60">3</td>
+      <td class="num s-targeted" style="color:#f39c12">0</td>
+      <td class="num s-cut" style="color:#e74c3c">0</td>
+    </tr>
+    <tr data-summary-kr="CSAT">
+      <td class="kr-name" style="color:#27AE60">CSAT</td>
+      <td class="num s-total">38</td>
+      <td class="num s-committed" style="color:#27ae60">13</td>
+      <td class="num s-targeted" style="color:#f39c12">0</td>
+      <td class="num s-cut" style="color:#e74c3c">0</td>
+    </tr>
+    <tr data-summary-kr="Product-led growth and Monetization">
+      <td class="kr-name" style="color:#F39C12">Product-led growth and Monetization</td>
+      <td class="num s-total">14</td>
+      <td class="num s-committed" style="color:#27ae60">6</td>
+      <td class="num s-targeted" style="color:#f39c12">0</td>
+      <td class="num s-cut" style="color:#e74c3c">0</td>
+    </tr>
+    <tr data-summary-kr="Intelligence for Events">
+      <td class="kr-name" style="color:#8E44AD">Intelligence for Events</td>
+      <td class="num s-total">1</td>
+      <td class="num s-committed" style="color:#27ae60">0</td>
+      <td class="num s-targeted" style="color:#f39c12">0</td>
+      <td class="num s-cut" style="color:#e74c3c">0</td>
+    </tr>
+    <tr data-summary-kr="High Impact Meeting">
+      <td class="kr-name" style="color:#2C3E50">High Impact Meeting</td>
+      <td class="num s-total">9</td>
+      <td class="num s-committed" style="color:#27ae60">0</td>
+      <td class="num s-targeted" style="color:#f39c12">0</td>
+      <td class="num s-cut" style="color:#e74c3c">0</td>
+    </tr>
+    <tr class="total-row">
+      <td>TOTAL</td>
+      <td class="num s-total">100</td>
+      <td class="num s-committed" style="color:#27ae60">34</td>
+      <td class="num s-targeted" style="color:#f39c12">0</td>
+      <td class="num s-cut" style="color:#e74c3c">0</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="section-title">Feature Detail by KR</div>
+<div class="detail-section">
+  <div class="kr-header" style="border-color:#4A90D9" data-kr="Fundamentals and Craft">
+    <h3 style="color:#4A90D9">Fundamentals and Craft</h3>
+    <div class="counts">12C / 0T / 0X &middot; 33 total</div>
+  </div>
+  <table class="detail-table">
+    <thead><tr><th>ID</th><th>Feature</th><th>Type</th><th>EM Owner</th><th>State</th><th>Commitment</th></tr></thead>
+    <tbody>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4891487" target="_blank">4891487</a></td>
+        <td>[Drop 3] TAC Reports for One Events</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4916512" target="_blank">4916512</a></td>
+        <td>[Drop 3] [Engage Owned] Hide Q&amp;A for Attendees in Event Landing Page if Q&amp;A is disabled in meeting options</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4971194" target="_blank">4971194</a></td>
+        <td>Draft event page: 'Join' button appears in Draft mode and is functional</td>
+        <td><span class="type-tag">Bug</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4973775" target="_blank">4973775</a></td>
+        <td>Preview event page as attendee: Organizer tabs (People, Insights, etc.) appear in attendee view</td>
+        <td><span class="type-tag">Bug</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5031190" target="_blank">5031190</a></td>
+        <td>Banner image does not fill its container (aspectratio/fill)</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5089662" target="_blank">5089662</a></td>
+        <td>[OneEvents][Drop 3] Remove duplicate scroll in Q&amp;A</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5101991" target="_blank">5101991</a></td>
+        <td>[OneEvents][Drop 3] Discover, attendee CTAs, and Q&amp;A - Fundamentals</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5102071" target="_blank">5102071</a></td>
+        <td>[OneEvents][Drop 3] Redirection on clicking Engage events</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5102927" target="_blank">5102927</a></td>
+        <td>[Drop 3] [DCR]Event page link - redirection rules (Meet app)</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5121417" target="_blank">5121417</a></td>
+        <td>[Drop 3] Telemetry and Instrumentation</td>
+        <td><span class="type-tag">Requirement</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5121418" target="_blank">5121418</a></td>
+        <td>[Drop 3] Feedback Kit Integration</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5148706" target="_blank">5148706</a></td>
+        <td>[COS Feedback] Publish dialog gives the impression that users can no longer invite more people to the event</td>
+        <td><span class="type-tag">Bug</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#8e44ad">Resolved</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4971219" target="_blank">4971219</a></td>
+        <td>Customize branding: Upload button doesn't change to "Replace" after use</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4981209" target="_blank">4981209</a></td>
+        <td>Draft event page: Chat and Join controls confusing when grouped</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5031186" target="_blank">5031186</a></td>
+        <td>Duplicate day on the event page and date in two places</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5031196" target="_blank">5031196</a></td>
+        <td>Host alias missing/hidden, hurting later Outlook searchability.</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5031233" target="_blank">5031233</a></td>
+        <td>Q&amp;A archived section should not appear if empty</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5031237" target="_blank">5031237</a></td>
+        <td>Double scroll bars work but feel clunkyneeds refinement.</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5031277" target="_blank">5031277</a></td>
+        <td>Cannot access Q&amp;A or VoD for events in past and no way to register</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5031278" target="_blank">5031278</a></td>
+        <td>Cannot filter questions in Q&amp;A as an attendee</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5117888" target="_blank">5117888</a></td>
+        <td>[Drop 3.5] [OneEvents] [COS Feedback] Organisers are not seeing correct DLs in the "To" section in email invites, attendees see it correctly</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5124130" target="_blank">5124130</a></td>
+        <td>[COS feedback] Q&amp;A visibility on portal page</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5148709" target="_blank">5148709</a></td>
+        <td>[COS Feedback]  Your organization label in event access section could be more clear</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5148723" target="_blank">5148723</a></td>
+        <td>[COS Feedback]  Back button navigation is confusing for users, not clear where it would take you back to</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5148767" target="_blank">5148767</a></td>
+        <td>[COS Feedback] Confusing why user can't change capacity if registration is off</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153271" target="_blank">5153271</a></td>
+        <td>[COS Feedback] Save button placement not intuitive- Users expect it to be at the bottom of the page but it is at the top</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153279" target="_blank">5153279</a></td>
+        <td>[COS Feedback] Q/A not visible as part of preview that organizers see on the landing page</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153283" target="_blank">5153283</a></td>
+        <td>[COS Feedback] Room Role 'Everyone' and 'Attendees' not clear in location field</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190315" target="_blank">5190315</a></td>
+        <td>[COS Feedback] Timezone on portal page according to the attendee timezone</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190317" target="_blank">5190317</a></td>
+        <td>[COS Feedback] Access section not very clear- what does your organization mean( does it include guests?)</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190320" target="_blank">5190320</a></td>
+        <td>[COS Feedback]  Users not able to understand that sensitivity label is tied up with access.</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5283339" target="_blank">5283339</a></td>
+        <td>[COS Feedback] Name of the people tab should be "People and Emails"</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Fundamentals and Craft">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5283341" target="_blank">5283341</a></td>
+        <td>[COS Feedback] "All options" button in the create form section: Setup experience and options should be made secondary</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="detail-section">
+  <div class="kr-header" style="border-color:#E74C3C" data-kr="Zoom compete/sales blockers">
+    <h3 style="color:#E74C3C">Zoom compete/sales blockers</h3>
+    <div class="counts">3C / 0T / 0X &middot; 5 total</div>
+  </div>
+  <table class="detail-table">
+    <thead><tr><th>ID</th><th>Feature</th><th>Type</th><th>EM Owner</th><th>State</th><th>Commitment</th></tr></thead>
+    <tbody>
+      <tr data-kr="Zoom compete/sales blockers">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4098900" target="_blank">4098900</a></td>
+        <td>[Drop 3] Virtual Events Service Support for 100k virtual events with registration</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Dharmendra Thotakura</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Zoom compete/sales blockers">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4098904" target="_blank">4098904</a></td>
+        <td>[Drop 3] Virtual Events Portal Support for 100k virtual events with registration</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Zoom compete/sales blockers">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4892306" target="_blank">4892306</a></td>
+        <td>[Drop 3]  People Tab - Attendees section supporting 100K registration</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Zoom compete/sales blockers">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4709134" target="_blank">4709134</a></td>
+        <td>[Drop 3] Scheduling - Performance and Reliability testing of Email for 100k Registration</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Zoom compete/sales blockers">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5151010" target="_blank">5151010</a></td>
+        <td>[Drop 3] [DCR] Scheduling - Performance and Reliability testing of Email for 20K Registration</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="detail-section">
+  <div class="kr-header" style="border-color:#27AE60" data-kr="CSAT">
+    <h3 style="color:#27AE60">CSAT</h3>
+    <div class="counts">13C / 0T / 0X &middot; 38 total</div>
+  </div>
+  <table class="detail-table">
+    <thead><tr><th>ID</th><th>Feature</th><th>Type</th><th>EM Owner</th><th>State</th><th>Commitment</th></tr></thead>
+    <tbody>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4707636" target="_blank">4707636</a></td>
+        <td>[Drop 3] VES - Custom Template CRUD APIs</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Dharmendra Thotakura</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4709076" target="_blank">4709076</a></td>
+        <td>[Drop 3] [One Events - VES dependency from IDC] VES - Support "invited only" (People and Groups) for Standard/Webinar session type</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Dharmendra Thotakura</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4709192" target="_blank">4709192</a></td>
+        <td>Use new registration policies for events</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#f39c12">RollingOut</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4949434" target="_blank">4949434</a></td>
+        <td>[Drop 3] Enable Polls toggle to One Events Form - Async after save</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4983592" target="_blank">4983592</a></td>
+        <td>[OneEvents][Drop 3] Q&amp;A lifecycle for public events.</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4983823" target="_blank">4983823</a></td>
+        <td>[Drop 3] Custom user templates</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5024216" target="_blank">5024216</a></td>
+        <td>[Drop 3] [DCR] Zoom feature for banner image to adjust as per Meet app requirements</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5099678" target="_blank">5099678</a></td>
+        <td>[Drop 3] [DCR] Add room availability in create experience - Room Availability</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5099689" target="_blank">5099689</a></td>
+        <td>[Drop 3] [DCR] Update Notify email From field logic</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5118590" target="_blank">5118590</a></td>
+        <td>[Drop 3] [Partner dependency - Notify] Restrict Email forwarding</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5118591" target="_blank">5118591</a></td>
+        <td>[Drop 3] [Partner dependency - Notify] Enable Custom Properties in ICS Files for Teams Meeting Integration to display Location, Join and Chat with participants</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190904" target="_blank">5190904</a></td>
+        <td>[COS Feedback] RSVP-Limited largescale accept/decline visibility</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190940" target="_blank">5190940</a></td>
+        <td>[COS Feedback] Not able to see all shared/ delegate calendars that users have access to</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4891483" target="_blank">4891483</a></td>
+        <td>[Drop 3] [DCR][One Events - VES dependency from IDC] Provide a way to Remove logo</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Dharmendra Thotakura</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4897148" target="_blank">4897148</a></td>
+        <td>[Drop 3] People Picker - Specific People and group support when registration is enabled</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5031205" target="_blank">5031205</a></td>
+        <td>Cannot cancel while awaiting approval (needs a cancel option).</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5109892" target="_blank">5109892</a></td>
+        <td>[Drop 3] [One Events] [COS Feedback]: Manage event link not noticeable</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5121632" target="_blank">5121632</a></td>
+        <td>[Drop 3] [DCR] Email template redesign- clear CTAs and clickable area to bring attendees to MeetApp</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5124118" target="_blank">5124118</a></td>
+        <td>[COS feedback] Forward invite functionality for organizers</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5124128" target="_blank">5124128</a></td>
+        <td>[COS feedback] Proposenewtime flows to be disabled for events</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5124134" target="_blank">5124134</a></td>
+        <td>[COS feedback] Support for recurring events</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5124173" target="_blank">5124173</a></td>
+        <td>[COS feedback] Support for Room alias in location search</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5124230" target="_blank">5124230</a></td>
+        <td>[COS feedback] Thankyou / followup emails containing surveys regarding overall event experience</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5148749" target="_blank">5148749</a></td>
+        <td>[COS Feedback] Expect to see a way to manage/add attendees from the People tab</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153263" target="_blank">5153263</a></td>
+        <td>[COS Feedback] External co-organizer support</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153281" target="_blank">5153281</a></td>
+        <td>[COS Feedback] Free text in Location field</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153284" target="_blank">5153284</a></td>
+        <td>[COS Feedback]  Room finder integration for Location field</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153294" target="_blank">5153294</a></td>
+        <td>[COS Feedback]Ability to export event details to excel, e.g., title, description, join link</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153313" target="_blank">5153313</a></td>
+        <td>[COS Feedback] Support for Multi-session events</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153317" target="_blank">5153317</a></td>
+        <td>[COS Feedback] Support for in person or offline events</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190302" target="_blank">5190302</a></td>
+        <td>[COS Feedback] Scenario based templates support like All hands, hackathon events templates etc. on Create page</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190304" target="_blank">5190304</a></td>
+        <td>[COS Feedback] Registration capacity should be shown with other related options like waitlist, manual approval (in that same section)</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190308" target="_blank">5190308</a></td>
+        <td>[COS Feedback]  User expect banner image to be the same for organizers, co-org and attendee emails</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190310" target="_blank">5190310</a></td>
+        <td>[COS Feedback]  Eventify like email format (already being taken care of as part of email redesign)</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190323" target="_blank">5190323</a></td>
+        <td>[COS Feedback]  The co-organizer field doesn't allow adding guests for now. This should be made clear (through tooltip or text)</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190328" target="_blank">5190328</a></td>
+        <td>[COS Feedback]  Email invites should be received from a trusted organizer name rather than generic Microsoft or tenant name</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190330" target="_blank">5190330</a></td>
+        <td>[COS Feedback] Toggling off specific emails to attendees (I want to send some/not all)</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="CSAT">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5254770" target="_blank">5254770</a></td>
+        <td>[COS Feedback] Support multi window/ pop out in Events for scheduling form</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="detail-section">
+  <div class="kr-header" style="border-color:#F39C12" data-kr="Product-led growth and Monetization">
+    <h3 style="color:#F39C12">Product-led growth and Monetization</h3>
+    <div class="counts">6C / 0T / 0X &middot; 14 total</div>
+  </div>
+  <table class="detail-table">
+    <thead><tr><th>ID</th><th>Feature</th><th>Type</th><th>EM Owner</th><th>State</th><th>Commitment</th></tr></thead>
+    <tbody>
+      <tr data-kr="Product-led growth and Monetization">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4863951" target="_blank">4863951</a></td>
+        <td>[One Events PLG] Meetings upsell from M365 and Win32 calendar form to Events</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Sabra Rossman</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Product-led growth and Monetization">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4892328" target="_blank">4892328</a></td>
+        <td>[Drop 3] Calendar flow entry points for One Events</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Product-led growth and Monetization">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4916482" target="_blank">4916482</a></td>
+        <td>[OneEvents][Drop 3] Add to calendar support in event landing page</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Product-led growth and Monetization">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4916630" target="_blank">4916630</a></td>
+        <td>[OneEvents][Drop 3] Add to calendar support in discover tab</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Product-led growth and Monetization">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5016533" target="_blank">5016533</a></td>
+        <td>Monetization - Moving TPRE Features to Teams Enterprise [Mukul Team]</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Product-led growth and Monetization">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5121416" target="_blank">5121416</a></td>
+        <td>[Drop 3] FRE Coachmarks - Pin Meet App Coachmark</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#2980b9">Active</span></td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+      </tr>
+      <tr data-kr="Product-led growth and Monetization">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4709062" target="_blank">4709062</a></td>
+        <td>[Drop 3] [One Events - VES dependency from IDC] Meet app - Add to calendar support for Hero Card in Discovery tab</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Dharmendra Thotakura</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Product-led growth and Monetization">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4935047" target="_blank">4935047</a></td>
+        <td>[One Events PLG] Teams notifications</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Product-led growth and Monetization">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4935048" target="_blank">4935048</a></td>
+        <td>[One Events PLG] Empty state for Meet/Events app</td>
+        <td><span class="type-tag">Feature</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Product-led growth and Monetization">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5124135" target="_blank">5124135</a></td>
+        <td>[COS feedback] support for event groups, community</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Product-led growth and Monetization">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153290" target="_blank">5153290</a></td>
+        <td>[COS Feedback] Filters to sift and sort events, e.g., Topic, Date, Sponsoring Org or Geo, Location, other</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Product-led growth and Monetization">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153291" target="_blank">5153291</a></td>
+        <td>[COS Feedback] Search capability in Discover</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Product-led growth and Monetization">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153295" target="_blank">5153295</a></td>
+        <td>[COS Feedback] Ability to surface event details in different places, e.g., Viva Engage, Outlook, SharePoint</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="Product-led growth and Monetization">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190313" target="_blank">5190313</a></td>
+        <td>[COS Feedback]  Need for filtering and grouping events to improve discoverability.</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="detail-section">
+  <div class="kr-header" style="border-color:#8E44AD" data-kr="Intelligence for Events">
+    <h3 style="color:#8E44AD">Intelligence for Events</h3>
+    <div class="counts">0C / 0T / 0X &middot; 1 total</div>
+  </div>
+  <table class="detail-table">
+    <thead><tr><th>ID</th><th>Feature</th><th>Type</th><th>EM Owner</th><th>State</th><th>Commitment</th></tr></thead>
+    <tbody>
+      <tr data-kr="Intelligence for Events">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153315" target="_blank">5153315</a></td>
+        <td>[COS Feedback]  AI-powered responses to frequently asked questions and automated FAQ handling</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="detail-section">
+  <div class="kr-header" style="border-color:#2C3E50" data-kr="High Impact Meeting">
+    <h3 style="color:#2C3E50">High Impact Meeting</h3>
+    <div class="counts">0C / 0T / 0X &middot; 9 total</div>
+  </div>
+  <table class="detail-table">
+    <thead><tr><th>ID</th><th>Feature</th><th>Type</th><th>EM Owner</th><th>State</th><th>Commitment</th></tr></thead>
+    <tbody>
+      <tr data-kr="High Impact Meeting">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5124138" target="_blank">5124138</a></td>
+        <td>[COS feedback] External presenters should be able to join green room</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="High Impact Meeting">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5148713" target="_blank">5148713</a></td>
+        <td>[COS Feedback] Broadcast vs Collaborative session types are not very clear</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="High Impact Meeting">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5148762" target="_blank">5148762</a></td>
+        <td>[COS Feedback] RTMP-In feature is confusing and not well understood</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="High Impact Meeting">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5148766" target="_blank">5148766</a></td>
+        <td>[COS Feedback] Screen setup could be more clear</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="High Impact Meeting">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153265" target="_blank">5153265</a></td>
+        <td>[COS Feedback] Screen setup option for setting up managed mode/ preview queue is not visible upfront in the scheduling form</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="High Impact Meeting">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153272" target="_blank">5153272</a></td>
+        <td>[COS Feedback] Not able to get Managed mode on vs off, RTMP on vs off (advanced options in general)</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="High Impact Meeting">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153273" target="_blank">5153273</a></td>
+        <td>[COS Feedback] Facilitator can be brought in for Collaborative events</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="High Impact Meeting">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190311" target="_blank">5190311</a></td>
+        <td>[COS Feedback]  Terminology simplification in form (it says broadcast, collaborative in the form but Webinar, Townhall in the predefined templates)</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+      <tr data-kr="High Impact Meeting">
+        <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5190325" target="_blank">5190325</a></td>
+        <td>[COS Feedback]  Screen setup meaning not very clear in the form</td>
+        <td><span class="type-tag">User Feedback</span></td>
+        <td><span class="em-owner">Srikanth Adi</span></td>
+        <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
