@@ -83,19 +83,27 @@ function promptToken() {
 }
 
 async function loadCommitments() {
+  // Load from localStorage first (instant, always works)
+  var local = localStorage.getItem('ga1e_commitments');
+  if (local) {
+    try { commitments = JSON.parse(local); applyCommitments(); } catch(e) {}
+  }
+  // Then try GitHub for latest shared state
   try {
-    showStatus('Loading...', 'saving');
     var resp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH, {
       headers: { 'Accept': 'application/vnd.github.v3+json', 'Cache-Control': 'no-cache' }
     });
     if (resp.ok) {
       var data = await resp.json();
       fileSha = data.sha;
-      commitments = JSON.parse(atob(data.content));
-      applyCommitments();
-      showStatus('Synced', 'ok');
+      var remote = JSON.parse(atob(data.content));
+      if (Object.keys(remote).length > 0) {
+        commitments = Object.assign(commitments, remote);
+        localStorage.setItem('ga1e_commitments', JSON.stringify(commitments));
+        applyCommitments();
+      }
     }
-  } catch(e) { console.error('Load failed:', e); }
+  } catch(e) { console.error('Remote load failed, using local:', e); }
 }
 
 function applyCommitments() {
@@ -150,6 +158,7 @@ function updateDropdown(sel) {
   sel.className = 'commitment-select val-' + sel.value;
   var id = sel.closest('tr').querySelector('a').textContent.trim();
   if (sel.value) { commitments[id] = sel.value; } else { delete commitments[id]; }
+  localStorage.setItem('ga1e_commitments', JSON.stringify(commitments));
   updateSummary();
   queueSave();
 }
