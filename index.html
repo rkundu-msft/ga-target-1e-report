@@ -95,7 +95,7 @@ async function loadCommitments() {
       applyCommitments();
       showStatus('Synced', 'ok');
     }
-  } catch(e) { showStatus('Load failed', 'error'); }
+  } catch(e) { console.error('Load failed:', e); }
 }
 
 function applyCommitments() {
@@ -208,11 +208,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
 <div class="header">
   <h1>One Events GA (1E) - Commitment View</h1>
 </div>
-<div class="save-bar">
-  <span id="save-status" class="save-status"></span>
-  <button class="refresh-btn" onclick="loadCommitments()">Refresh</button>
-  <button class="token-btn" onclick="promptToken()">Set Token</button>
-</div>
+<span id="save-status" class="save-status" style="display:none"></span>
 
 <div class="section-title">Commitment Summary by KR</div>
 <table class="summary-table">
