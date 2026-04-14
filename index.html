@@ -89,6 +89,14 @@
   .kr-matrix tr:hover td { background: #f9fbfd; }
   .kr-matrix .bar-cell { position: relative; }
   .kr-matrix .mini-bar { display: inline-block; height: 6px; border-radius: 3px; vertical-align: middle; margin-left: 6px; }
+
+  /* State filter bar */
+  .filter-bar { max-width: 1300px; margin: 0 auto 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .filter-bar label { font-size: 12px; font-weight: 600; color: #555; margin-right: 4px; }
+  .filter-pill { display: inline-block; padding: 5px 14px; border-radius: 16px; font-size: 11px; font-weight: 600; cursor: pointer; border: 2px solid; user-select: none; transition: all 0.15s; }
+  .filter-pill.active { color: #fff; }
+  .filter-pill:not(.active) { background: #fff; }
+  .filter-pill:hover { opacity: 0.85; }
 </style>
 <script>
 const REPO = 'rkundu-msft/ga-target-1e-report';
@@ -229,6 +237,47 @@ function updateSummary() {
   });
 }
 
+var activeFilters = new Set();
+
+function toggleFilter(pill, state, color) {
+  if (activeFilters.has(state)) {
+    activeFilters.delete(state);
+    pill.classList.remove('active');
+    pill.style.background = '#fff';
+    pill.style.color = color;
+  } else {
+    activeFilters.add(state);
+    pill.classList.add('active');
+    pill.style.background = color;
+    pill.style.color = '#fff';
+  }
+  applyFilters();
+}
+
+function applyFilters() {
+  var rows = document.querySelectorAll('tr[data-kr]');
+  var show = activeFilters.size === 0; // show all if no filter
+  rows.forEach(function(row) {
+    var stateEl = row.querySelector('.state-tag');
+    if (!stateEl) return;
+    var state = stateEl.textContent.trim();
+    row.style.display = (show || activeFilters.has(state)) ? '' : 'none';
+  });
+  // Update visible counts on KR headers
+  document.querySelectorAll('.kr-header[data-kr]').forEach(function(hdr) {
+    var kr = hdr.getAttribute('data-kr');
+    var table = hdr.nextElementSibling;
+    if (!table) return;
+    var visible = table.querySelectorAll('tr[data-kr]:not([style*="display: none"])').length;
+    var total = table.querySelectorAll('tr[data-kr]').length;
+    var suffix = activeFilters.size > 0 ? ' (filtered ' + visible + '/' + total + ')' : '';
+    var countsEl = hdr.querySelector('.counts');
+    var base = countsEl.getAttribute('data-base');
+    if (!base) { countsEl.setAttribute('data-base', countsEl.textContent); base = countsEl.textContent; }
+    countsEl.textContent = activeFilters.size > 0 ? visible + '/' + total + ' shown' : base;
+  });
+}
+
 document.addEventListener('DOMContentLoaded', loadCommitments);
 </script>
 </head>
@@ -236,9 +285,18 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
 
 <div class="header">
   <h1>One Events GA (1E) - Commitment View</h1>
-  <p>Refreshed: April 14, 2026 08:57 AM</p>
+  <p>Refreshed: April 14, 2026 09:24 AM</p>
 </div>
 <span id="save-status" class="save-status" style="display:none"></span>
+
+<div class="filter-bar">
+  <label>Filter by State:</label>
+  <span class="filter-pill" style="border-color:#2980b9;color:#2980b9" onclick="toggleFilter(this,'Active','#2980b9')">Active</span>
+  <span class="filter-pill" style="border-color:#27ae60;color:#27ae60" onclick="toggleFilter(this,'Closed','#27ae60')">Closed</span>
+  <span class="filter-pill" style="border-color:#95a5a6;color:#95a5a6" onclick="toggleFilter(this,'Proposed','#95a5a6')">Proposed</span>
+  <span class="filter-pill" style="border-color:#8e44ad;color:#8e44ad" onclick="toggleFilter(this,'Resolved','#8e44ad')">Resolved</span>
+  <span class="filter-pill" style="border-color:#f39c12;color:#f39c12" onclick="toggleFilter(this,'RollingOut','#f39c12')">RollingOut</span>
+</div>
 
 <div class="cutline">
 <div class="section-title">Shiproom Cutline</div>
