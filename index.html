@@ -254,14 +254,20 @@ function toggleFilter(pill, state, color) {
   applyFilters();
 }
 
+function getRowCommitment(row) {
+  var badge = row.querySelector('.badge');
+  if (badge) return badge.textContent.trim();
+  var sel = row.querySelector('select.commitment-select');
+  if (sel && sel.value) return sel.value;
+  return 'Unset';
+}
+
 function applyFilters() {
   var rows = document.querySelectorAll('tr[data-kr]');
-  var show = activeFilters.size === 0; // show all if no filter
+  var show = activeFilters.size === 0;
   rows.forEach(function(row) {
-    var stateEl = row.querySelector('.state-tag');
-    if (!stateEl) return;
-    var state = stateEl.textContent.trim();
-    row.style.display = (show || activeFilters.has(state)) ? '' : 'none';
+    var val = getRowCommitment(row);
+    row.style.display = (show || activeFilters.has(val)) ? '' : 'none';
   });
   // Update visible counts on KR headers
   document.querySelectorAll('.kr-header[data-kr]').forEach(function(hdr) {
@@ -285,17 +291,16 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
 
 <div class="header">
   <h1>One Events GA (1E) - Commitment View</h1>
-  <p>Refreshed: April 14, 2026 09:24 AM</p>
+  <p>Refreshed: April 14, 2026 09:36 AM</p>
 </div>
 <span id="save-status" class="save-status" style="display:none"></span>
 
 <div class="filter-bar">
-  <label>Filter by State:</label>
-  <span class="filter-pill" style="border-color:#2980b9;color:#2980b9" onclick="toggleFilter(this,'Active','#2980b9')">Active</span>
-  <span class="filter-pill" style="border-color:#27ae60;color:#27ae60" onclick="toggleFilter(this,'Closed','#27ae60')">Closed</span>
-  <span class="filter-pill" style="border-color:#95a5a6;color:#95a5a6" onclick="toggleFilter(this,'Proposed','#95a5a6')">Proposed</span>
-  <span class="filter-pill" style="border-color:#8e44ad;color:#8e44ad" onclick="toggleFilter(this,'Resolved','#8e44ad')">Resolved</span>
-  <span class="filter-pill" style="border-color:#f39c12;color:#f39c12" onclick="toggleFilter(this,'RollingOut','#f39c12')">RollingOut</span>
+  <label>Filter by Commitment:</label>
+  <span class="filter-pill" style="border-color:#27ae60;color:#27ae60" onclick="toggleFilter(this,'Committed','#27ae60')">Committed</span>
+  <span class="filter-pill" style="border-color:#f39c12;color:#f39c12" onclick="toggleFilter(this,'Targeted','#f39c12')">Targeted</span>
+  <span class="filter-pill" style="border-color:#e74c3c;color:#e74c3c" onclick="toggleFilter(this,'Cut','#e74c3c')">Cut</span>
+  <span class="filter-pill" style="border-color:#95a5a6;color:#95a5a6" onclick="toggleFilter(this,'Unset','#95a5a6')">Unset</span>
 </div>
 
 <div class="cutline">
