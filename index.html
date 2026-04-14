@@ -291,14 +291,17 @@ function applyFilters() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', loadCommitments);
+document.addEventListener('DOMContentLoaded', function() {
+  updateSummary();
+  loadCommitments();
+});
 </script>
 </head>
 <body>
 
 <div class="header">
   <h1>One Events GA (1E) - Commitment View</h1>
-  <p>Refreshed: April 14, 2026 11:11 AM</p>
+  <p>Refreshed: April 14, 2026 11:15 AM</p>
 </div>
 <div class="save-bar">
   <span id="save-status" class="save-status"></span>
@@ -419,37 +422,37 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
     <tr data-summary-kr="Fundamentals and Craft">
       <td class="kr-name" style="color:#4A90D9">Fundamentals and Craft</td>
       <td class="num s-total">49</td>
-      <td class="num s-committed" style="color:#27ae60">0</td>
+      <td class="num s-committed" style="color:#27ae60">33</td>
       <td class="num s-targeted" style="color:#f39c12">0</td>
-      <td class="num s-cut" style="color:#e74c3c">0</td>
+      <td class="num s-cut" style="color:#e74c3c">1</td>
     </tr>
     <tr data-summary-kr="Zoom compete/sales blockers">
       <td class="kr-name" style="color:#E74C3C">Zoom compete/sales blockers</td>
       <td class="num s-total">5</td>
-      <td class="num s-committed" style="color:#27ae60">0</td>
+      <td class="num s-committed" style="color:#27ae60">5</td>
       <td class="num s-targeted" style="color:#f39c12">0</td>
       <td class="num s-cut" style="color:#e74c3c">0</td>
     </tr>
     <tr data-summary-kr="CSAT">
       <td class="kr-name" style="color:#27AE60">CSAT</td>
       <td class="num s-total">26</td>
-      <td class="num s-committed" style="color:#27ae60">0</td>
-      <td class="num s-targeted" style="color:#f39c12">0</td>
+      <td class="num s-committed" style="color:#27ae60">17</td>
+      <td class="num s-targeted" style="color:#f39c12">1</td>
       <td class="num s-cut" style="color:#e74c3c">0</td>
     </tr>
     <tr data-summary-kr="Product-led growth and Monetization">
       <td class="kr-name" style="color:#F39C12">Product-led growth and Monetization</td>
       <td class="num s-total">14</td>
-      <td class="num s-committed" style="color:#27ae60">0</td>
+      <td class="num s-committed" style="color:#27ae60">9</td>
       <td class="num s-targeted" style="color:#f39c12">0</td>
-      <td class="num s-cut" style="color:#e74c3c">0</td>
+      <td class="num s-cut" style="color:#e74c3c">1</td>
     </tr>
     <tr class="total-row">
       <td>TOTAL</td>
       <td class="num s-total">94</td>
-      <td class="num s-committed" style="color:#27ae60">0</td>
-      <td class="num s-targeted" style="color:#f39c12">0</td>
-      <td class="num s-cut" style="color:#e74c3c">0</td>
+      <td class="num s-committed" style="color:#27ae60">64</td>
+      <td class="num s-targeted" style="color:#f39c12">1</td>
+      <td class="num s-cut" style="color:#e74c3c">2</td>
     </tr>
   </tbody>
 </table>
@@ -458,7 +461,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
 <div class="detail-section">
   <div class="kr-header" style="border-color:#4A90D9" data-kr="Fundamentals and Craft">
     <h3 style="color:#4A90D9">Fundamentals and Craft</h3>
-    <div class="counts">0C / 0T / 0X &middot; 49 total</div>
+    <div class="counts">33C / 0T / 1X &middot; 49 total</div>
   </div>
   <table class="detail-table">
     <thead><tr><th>ID</th><th>Feature</th><th>Type</th><th>EM Owner</th><th>State</th><th>Commitment</th></tr></thead>
@@ -966,7 +969,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
 <div class="detail-section">
   <div class="kr-header" style="border-color:#E74C3C" data-kr="Zoom compete/sales blockers">
     <h3 style="color:#E74C3C">Zoom compete/sales blockers</h3>
-    <div class="counts">0C / 0T / 0X &middot; 5 total</div>
+    <div class="counts">5C / 0T / 0X &middot; 5 total</div>
   </div>
   <table class="detail-table">
     <thead><tr><th>ID</th><th>Feature</th><th>Type</th><th>EM Owner</th><th>State</th><th>Commitment</th></tr></thead>
@@ -1017,7 +1020,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
 <div class="detail-section">
   <div class="kr-header" style="border-color:#27AE60" data-kr="CSAT">
     <h3 style="color:#27AE60">CSAT</h3>
-    <div class="counts">0C / 0T / 0X &middot; 26 total</div>
+    <div class="counts">17C / 1T / 0X &middot; 26 total</div>
   </div>
   <table class="detail-table">
     <thead><tr><th>ID</th><th>Feature</th><th>Type</th><th>EM Owner</th><th>State</th><th>Commitment</th></tr></thead>
@@ -1292,7 +1295,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
 <div class="detail-section">
   <div class="kr-header" style="border-color:#F39C12" data-kr="Product-led growth and Monetization">
     <h3 style="color:#F39C12">Product-led growth and Monetization</h3>
-    <div class="counts">0C / 0T / 0X &middot; 14 total</div>
+    <div class="counts">9C / 0T / 1X &middot; 14 total</div>
   </div>
   <table class="detail-table">
     <thead><tr><th>ID</th><th>Feature</th><th>Type</th><th>EM Owner</th><th>State</th><th>Commitment</th></tr></thead>
