@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <div class="header">
   <h1>One Events GA (1E) - Commitment View</h1>
-  <p>Refreshed: April 14, 2026 11:21 AM</p>
+  <p>Refreshed: April 14, 2026 05:57 AM</p>
 </div>
 <div class="save-bar">
   <span id="save-status" class="save-status"></span>
@@ -424,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <td class="num s-total">49</td>
       <td class="num s-committed" style="color:#27ae60">33</td>
       <td class="num s-targeted" style="color:#f39c12">0</td>
-      <td class="num s-cut" style="color:#e74c3c">1</td>
+      <td class="num s-cut" style="color:#e74c3c">0</td>
     </tr>
     <tr data-summary-kr="Zoom compete/sales blockers">
       <td class="kr-name" style="color:#E74C3C">Zoom compete/sales blockers</td>
@@ -452,7 +452,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <td class="num s-total">94</td>
       <td class="num s-committed" style="color:#27ae60">64</td>
       <td class="num s-targeted" style="color:#f39c12">1</td>
-      <td class="num s-cut" style="color:#e74c3c">2</td>
+      <td class="num s-cut" style="color:#e74c3c">1</td>
     </tr>
   </tbody>
 </table>
@@ -461,7 +461,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="detail-section">
   <div class="kr-header" style="border-color:#4A90D9" data-kr="Fundamentals and Craft">
     <h3 style="color:#4A90D9">Fundamentals and Craft</h3>
-    <div class="counts">33C / 0T / 1X &middot; 49 total</div>
+    <div class="counts">33C / 0T / 0X &middot; 49 total</div>
   </div>
   <table class="detail-table">
     <thead><tr><th>ID</th><th>Feature</th><th>Type</th><th>EM Owner</th><th>State</th><th>Commitment</th></tr></thead>
@@ -504,7 +504,14 @@ document.addEventListener('DOMContentLoaded', function() {
         <td><span class="type-tag">User Feedback</span></td>
         <td><span class="em-owner">Rohan Kakarakayala</span></td>
         <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
-        <td><span class="badge" style="background:#e74c3c">Cut</span></td>
+        <td>
+          <select class="commitment-select val-" onchange="updateDropdown(this)">
+            <option value="" selected>-- Select --</option>
+            <option value="Committed">Committed</option>
+            <option value="Targeted">Targeted</option>
+            <option value="Cut">Cut</option>
+          </select>
+        </td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4973775" target="_blank">4973775</a></td>
