@@ -949,15 +949,19 @@ document.addEventListener('DOMContentLoaded', function() {
             lines.append(f'        <td><span class="em-owner">{owner}</span></td>')
             lines.append(f'        <td><span class="state-tag" style="background:{state_color}">{html.escape(state)}</span></td>')
             commitment = item.get("commitment", "")
-            val_class = f"val-{commitment}" if commitment else "val-"
-            lines.append('        <td>')
-            lines.append(f'          <select class="commitment-select {val_class}" onchange="updateDropdown(this)">')
-            lines.append(f'            <option value=""{" selected" if not commitment else ""}>-- Select --</option>')
-            lines.append(f'            <option value="Committed"{" selected" if commitment == "Committed" else ""}>Committed</option>')
-            lines.append(f'            <option value="Targeted"{" selected" if commitment == "Targeted" else ""}>Targeted</option>')
-            lines.append(f'            <option value="Cut"{" selected" if commitment == "Cut" else ""}>Cut</option>')
-            lines.append('          </select>')
-            lines.append('        </td>')
+            if commitment:
+                badge_colors = {"Committed": "#27ae60", "Targeted": "#f39c12", "Cut": "#e74c3c"}
+                bc = badge_colors.get(commitment, "#95a5a6")
+                lines.append(f'        <td><span class="badge" style="background:{bc}">{html.escape(commitment)}</span></td>')
+            else:
+                lines.append('        <td>')
+                lines.append('          <select class="commitment-select val-" onchange="updateDropdown(this)">')
+                lines.append('            <option value="" selected>-- Select --</option>')
+                lines.append('            <option value="Committed">Committed</option>')
+                lines.append('            <option value="Targeted">Targeted</option>')
+                lines.append('            <option value="Cut">Cut</option>')
+                lines.append('          </select>')
+                lines.append('        </td>')
             lines.append('      </tr>')
 
         lines.append('    </tbody>')
