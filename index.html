@@ -298,9 +298,12 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
 
 <div class="header">
   <h1>One Events GA (1E) - Commitment View</h1>
-  <p>Refreshed: April 14, 2026 11:02 AM</p>
+  <p>Refreshed: April 14, 2026 11:11 AM</p>
 </div>
-<span id="save-status" class="save-status" style="display:none"></span>
+<div class="save-bar">
+  <span id="save-status" class="save-status"></span>
+  <button class="token-btn" onclick="if(promptToken())loadCommitments()">Set GitHub Token</button>
+</div>
 
 <div class="filter-bar">
   <label>Commitment:</label>
@@ -466,14 +469,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Task</span></td>
         <td><span class="em-owner">Pradeep Bhaduria</span></td>
         <td><span class="state-tag" style="background:#2980b9">Active</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4891487" target="_blank">4891487</a></td>
@@ -505,7 +501,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">User Feedback</span></td>
         <td><span class="em-owner">Rohan Kakarakayala</span></td>
         <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
-        <td><span class="badge" style="background:#27ae60">Committed</span></td>
+        <td><span class="badge" style="background:#e74c3c">Cut</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4973775" target="_blank">4973775</a></td>
@@ -720,14 +716,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Bug</span></td>
         <td><span class="em-owner">Pradeep Bhaduria</span></td>
         <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5152910" target="_blank">5152910</a></td>
@@ -735,14 +724,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Bug</span></td>
         <td><span class="em-owner">John Chow</span></td>
         <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5152939" target="_blank">5152939</a></td>
@@ -750,14 +732,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Bug</span></td>
         <td><span class="em-owner">Pradeep Bhaduria</span></td>
         <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5153279" target="_blank">5153279</a></td>
@@ -780,14 +755,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Bug</span></td>
         <td><span class="em-owner">Pradeep Bhaduria</span></td>
         <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5170445" target="_blank">5170445</a></td>
@@ -795,14 +763,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Bug</span></td>
         <td><span class="em-owner">Pradeep Bhaduria</span></td>
         <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5202331" target="_blank">5202331</a></td>
@@ -825,14 +786,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Task</span></td>
         <td><span class="em-owner">Abhishek Tiwari</span></td>
         <td><span class="state-tag" style="background:#2980b9">Active</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5202340" target="_blank">5202340</a></td>
@@ -840,14 +794,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Task</span></td>
         <td><span class="em-owner">Abhishek Tiwari</span></td>
         <td><span class="state-tag" style="background:#2980b9">Active</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5202342" target="_blank">5202342</a></td>
@@ -855,14 +802,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Task</span></td>
         <td><span class="em-owner">Pradeep Bhaduria</span></td>
         <td><span class="state-tag" style="background:#2980b9">Active</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5228957" target="_blank">5228957</a></td>
@@ -870,14 +810,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Task</span></td>
         <td><span class="em-owner">Jyoti Prakash Sahoo</span></td>
         <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5241677" target="_blank">5241677</a></td>
@@ -885,14 +818,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Bug</span></td>
         <td><span class="em-owner">GitHub Copilot</span></td>
         <td><span class="state-tag" style="background:#2980b9">Active</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5247373" target="_blank">5247373</a></td>
@@ -900,14 +826,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Task</span></td>
         <td><span class="em-owner">Abhishek Tiwari</span></td>
         <td><span class="state-tag" style="background:#2980b9">Active</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5251279" target="_blank">5251279</a></td>
@@ -915,14 +834,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Bug</span></td>
         <td><span class="em-owner">Abhishek Tiwari</span></td>
         <td><span class="state-tag" style="background:#2980b9">Active</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5251797" target="_blank">5251797</a></td>
@@ -930,14 +842,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Bug</span></td>
         <td><span class="em-owner">Abhishek Tiwari</span></td>
         <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5251834" target="_blank">5251834</a></td>
@@ -945,14 +850,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Bug</span></td>
         <td><span class="em-owner">Sohini Bhattacharya</span></td>
         <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5254862" target="_blank">5254862</a></td>
@@ -960,14 +858,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Bug</span></td>
         <td><span class="em-owner">Pradeep Bhaduria</span></td>
         <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5254886" target="_blank">5254886</a></td>
@@ -975,14 +866,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Bug</span></td>
         <td><span class="em-owner">Pradeep Bhaduria</span></td>
         <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5270446" target="_blank">5270446</a></td>
@@ -1058,14 +942,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Bug</span></td>
         <td><span class="em-owner">Pradeep Bhaduria</span></td>
         <td><span class="state-tag" style="background:#2980b9">Active</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5291136" target="_blank">5291136</a></td>
@@ -1073,14 +950,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Task</span></td>
         <td><span class="em-owner">Piyush Sharma</span></td>
         <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Fundamentals and Craft">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5297279" target="_blank">5297279</a></td>
@@ -1088,14 +958,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Bug</span></td>
         <td><span class="em-owner">Pradeep Bhaduria</span></td>
         <td><span class="state-tag" style="background:#8e44ad">Resolved</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
     </tbody>
   </table>
@@ -1205,14 +1068,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Feature</span></td>
         <td><span class="em-owner">Z Nguyen-Huu</span></td>
         <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="CSAT">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4897148" target="_blank">4897148</a></td>
@@ -1375,14 +1231,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">User Feedback</span></td>
         <td><span class="em-owner">Shefali Birla</span></td>
         <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="CSAT">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5222315" target="_blank">5222315</a></td>
@@ -1420,14 +1269,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Bug</span></td>
         <td><span class="em-owner">Abhishek Tiwari</span></td>
         <td><span class="state-tag" style="background:#27ae60">Closed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="CSAT">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5312149" target="_blank">5312149</a></td>
@@ -1461,14 +1303,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">Feature</span></td>
         <td><span class="em-owner">Aviral Petwal</span></td>
         <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#27ae60">Committed</span></td>
       </tr>
       <tr data-kr="Product-led growth and Monetization">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/4863951" target="_blank">4863951</a></td>
@@ -1540,14 +1375,7 @@ document.addEventListener('DOMContentLoaded', loadCommitments);
         <td><span class="type-tag">User Feedback</span></td>
         <td><span class="em-owner">Raj Jain</span></td>
         <td><span class="state-tag" style="background:#95a5a6">Proposed</span></td>
-        <td>
-          <select class="commitment-select val-" onchange="updateDropdown(this)">
-            <option value="" selected>-- Select --</option>
-            <option value="Committed">Committed</option>
-            <option value="Targeted">Targeted</option>
-            <option value="Cut">Cut</option>
-          </select>
-        </td>
+        <td><span class="badge" style="background:#e74c3c">Cut</span></td>
       </tr>
       <tr data-kr="Product-led growth and Monetization">
         <td><a href="https://domoreexp.visualstudio.com/MSTeams/_workitems/edit/5222196" target="_blank">5222196</a></td>
